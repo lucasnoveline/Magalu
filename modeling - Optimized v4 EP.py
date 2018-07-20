@@ -295,33 +295,58 @@ def ConsolidateSKUinfo(modelAdvisia,modelMagazine,uniqWeekCodes,SKU,priceSKU,cos
         # 0                           c0                  c1
         if (meanSalesSKU == 0):
             tempCluster = 1
-        # 0	   0.1		0	80		     c1b                 c2
-        if ((meanSalesSKU>0)&(meanSalesSKU<=0.1)&(priceSKUTemp>0)&(priceSKUTemp<=80)):
+
+        # 0	   0.1		0	320		     c1b                 c2
+        if ((meanSalesSKU>0)&(meanSalesSKU<=0.1)&(priceSKUTemp>0)&(priceSKUTemp<=320)):
             tempCluster = 2
     
-        # 0	   0.1		80	180		   c1m                c3
-        if ((meanSalesSKU>0)&(meanSalesSKU<=0.1)&(priceSKUTemp>80)&(priceSKUTemp<=180)):
+        # 0	   0.1		320	800		   c1m                c3
+        if ((meanSalesSKU>0)&(meanSalesSKU<=0.1)&(priceSKUTemp>320)&(priceSKUTemp<=800)):
             tempCluster = 3
     
-        # 0	   0.1		180	10000		   c1a                c4
-        if ((meanSalesSKU>0)&(meanSalesSKU<=0.1)&(priceSKUTemp>180)&(priceSKUTemp<=10000)):
+        # 0	   0.1		800	6000		   c1a                c4
+        if ((meanSalesSKU>0)&(meanSalesSKU<=0.1)&(priceSKUTemp>800)&(priceSKUTemp<=6000)):
             tempCluster = 4
 
-        # 0.1	0.266667	0	90		     c2b                 c5
-        if ((meanSalesSKU>0.1)&(meanSalesSKU<=0.266667)&(priceSKUTemp>0)&(priceSKUTemp<=90)):
+        # 0.1	0.3333	0	140		     c2b                 c5
+        if ((meanSalesSKU>0.1)&(meanSalesSKU<=0.3333)&(priceSKUTemp>0)&(priceSKUTemp<=140)):
             tempCluster = 5
 
-        # 0.1	0.266667	90	10000		   c2m                c6
-        if ((meanSalesSKU>0.1)&(meanSalesSKU<=0.266667)&(priceSKUTemp>90)&(priceSKUTemp<=10000)):
+        # 0.1	0.3333	140	400		   c2m                c6
+        if ((meanSalesSKU>0.1)&(meanSalesSKU<=0.3333)&(priceSKUTemp>140)&(priceSKUTemp<=400)):
             tempCluster = 6
 
-        # 0.266667	0.666667	400	6000		   c2a                c7
-        if ((meanSalesSKU>0.266667)&(meanSalesSKU<=0.666667)&(priceSKUTemp>=0)&(priceSKUTemp<=10000)):
+        # 0.1	0.3333	400	6000		   c2a                c7
+        if ((meanSalesSKU>0.1)&(meanSalesSKU<=0.3333)&(priceSKUTemp>400)&(priceSKUTemp<=6000)):
             tempCluster = 7
 
         # 0.3333	0.523809524		     0	150		 c3b     c8
-        if ((meanSalesSKU>0.666667)&(meanSalesSKU<=100)&(priceSKUTemp>=0)&(priceSKUTemp<=10000)):
+        if ((meanSalesSKU>0.3333)&(meanSalesSKU<=0.523809524)&(priceSKUTemp>0)&(priceSKUTemp<=150)):
             tempCluster = 8
+
+        # 0.3333	0.523809524		     150	6000	 c3a     c9
+        if ((meanSalesSKU>0.3333)&(meanSalesSKU<=0.523809524)&(priceSKUTemp>150)&(priceSKUTemp<=6000)):
+            tempCluster = 9
+
+        # 0.523809524	0.761904762		0	130		 c4b     c10
+        if ((meanSalesSKU>0.523809524)&(meanSalesSKU<=0.9)&(priceSKUTemp>0)&(priceSKUTemp<=130)):
+            tempCluster = 10
+
+        # 0.523809524	0.761904762		130	6000	 c4a     c11
+        if ((meanSalesSKU>0.523809524)&(meanSalesSKU<=0.9)&(priceSKUTemp>130)&(priceSKUTemp<=6000)):
+            tempCluster = 11
+    
+        # 0.761904762	0.952380952		0	6000		 c5    	 c12						
+        if ((meanSalesSKU>0.9)&(meanSalesSKU<=1.5)&(priceSKUTemp>0)&(priceSKUTemp<=6000)):
+            tempCluster = 12
+    
+        # 0.952380952	1.285714286		0	6000		 c6      c13
+        if ((meanSalesSKU>1.5)&(meanSalesSKU<=2.000)&(priceSKUTemp>0)&(priceSKUTemp<=6000)):  #1.285714286
+            tempCluster = 13
+    
+        # 1.285714286	100		0	6000		         c7      c14
+        if ((meanSalesSKU>2.000)&(meanSalesSKU<=100)&(priceSKUTemp>0)&(priceSKUTemp<=6000)):
+            tempCluster = 14
     else:
         tempCluster = -1
 
@@ -650,11 +675,11 @@ def main():
 
     # Using "finalBaseP" created by "SellingAnalysis.R":
     finalBaseP = pd.read_csv(root+'Output\\finalBaseP.csv')
-    estoque = pd.read_csv(root+'Output\\estoqueAnaDIB2 UD.csv')
+    estoque = pd.read_csv(root+'Output\\estoqueAnaDIB2.csv')
     sazoBase2 = pd.read_csv(root+'Output\\sazoSemanaCode.csv',sep=";")
     priceSKU = pd.read_csv(root+'Output\\priceSKUV2.csv',sep=";")
     costSKU = pd.read_csv(root+'Output\\costSKUV2.csv',sep=";")
-
+	
     deParaTable = finalBaseP.groupby(['SemanaCode',
                                       'DataCode']).agg({'CaptureDate':'first'}).reset_index()
     deParaTable = deParaTable[['SemanaCode','DataCode','CaptureDate']]
@@ -717,7 +742,7 @@ def main():
                      'CustoAd','CustoMl']
 
     # 5- Dynamic Clustering:
-    teste.to_csv('C:\\Users\\'+pessoa+'\\Dropbox (ADVISIA)\\201708 Magazine Luiza - Demand Pred\\05 Results\\results20180716 UD.csv',sep=';',index=False)
+    teste.to_csv('C:\\Users\\'+pessoa+'\\Dropbox (ADVISIA)\\201708 Magazine Luiza - Demand Pred\\05 Results\\results20180718 EP.csv',sep=';',index=False)
 
 if __name__ == '__main__':
     # Better protect your main function when you use multiprocessing
